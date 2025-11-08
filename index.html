@@ -1,251 +1,521 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
-  <title>404 | Not Found - 消小潇</title>
-  
-  <link rel="stylesheet" href="/themes/theme-earth/assets/dist/style.css?v=1.13.1" />
-  <script>
-    window.i18nResources = {
-      "jsModule.colorSchemeSwitcher.dark": `暗色`,
-      "jsModule.colorSchemeSwitcher.light": `亮色`,
-      "jsModule.colorSchemeSwitcher.auto": `跟随系统`,
-      "jsModule.share.qzone": `QQ 空间`,
-      "jsModule.share.weibo": `微博`,
-      "jsModule.share.douban": `豆瓣`,
-      "jsModule.share.wechat": `微信`,
-      "jsModule.share.native": `系统分享`,
-      "jsModule.share.windowTitle": `分享`,
-      "jsModule.upvote.networkError": `网络请求失败，请稍后再试`,
-    };
-  </script>
-  <script src="/themes/theme-earth/assets/dist/main.iife.js?v=1.13.1"></script>
-  <script>
-    main.initColorScheme("system",true)
-  </script>
-
-
-    
-  </head>
-  <body class="bg-slate-50 dark:bg-slate-900">
-    <header
-  id="header-menu"
-  class="sticky top-0 z-10 flex h-16 bg-white py-3 shadow-sm transition-all dark:bg-gray-800"
-  x-data="{ open : false }"
->
-  <div class="mx-auto flex h-full w-full max-w-7xl justify-between px-4 lg:px-6">
-    <div class="flex h-full items-center gap-6">
-      <div class="mr-2 h-full">
-        <a href="/" class="inline-flex h-full items-center">
-          
-          <span
-            id="site-title"
-            class="text-lg font-medium text-gray-900 dark:text-slate-100"
-          >消小潇</span>
-        </a>
-      </div>
-      
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curl命令解析器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        dark: {
+                            100: '#1f2937',
+                            200: '#111827',
+                            300: '#030712'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'pulse-light': 'pulseLight 2s infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        pulseLight: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.7' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-glass {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+            }
+            .dark .bg-glass {
+                background: rgba(17, 24, 39, 0.8);
+                backdrop-filter: blur(10px);
+            }
+            .scrollbar-thin {
+                scrollbar-width: thin;
+            }
+            .scrollbar-thin::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+                background-color: rgba(156, 163, 175, 0.5);
+                border-radius: 3px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800 dark:bg-dark-200 dark:text-gray-100 min-h-screen transition-colors duration-300">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute -top-1/4 -right-1/4 w-3/4 h-3/4 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4 bg-green-500 opacity-5 rounded-full blur-3xl"></div>
     </div>
-    <div class="flex items-center">
-      <ul x-data="colorSchemeSwitcher" class="flex items-center gap-4">
-        <li class="sm:hidden" x-on:click="open = true">
-          <div class="i-tabler-menu-2 text-lg text-gray-600 hover:text-blue-600 dark:text-slate-100"></div>
-        </li>
-        <li
-          x-data="dropdown"
-          class="relative cursor-pointer transition-all"
-          @mouseenter="open()"
-          @mouseleave="close()"
-        >
-          <div
-            class="cursor-pointer text-lg text-gray-600 transition-all hover:text-blue-600 dark:text-slate-100"
-            :class="colorScheme.icon"
-          ></div>
-          <ul
-            @mouseenter="open()"
-            @mouseleave="close()"
-            x-show="show"
-            x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="transform opacity-0 scale-95"
-            x-transition:enter-end="transform opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="transform opacity-100 scale-100"
-            x-transition:leave-end="transform opacity-0 scale-95"
-            class="absolute right-0 z-10 mt-2 w-40 divide-y divide-gray-50 overflow-hidden rounded bg-white shadow dark:divide-slate-600 dark:bg-slate-700"
-          >
-            <template x-for="colorScheme in colorSchemes">
-              <li
-                class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-50 dark:hover:bg-slate-600 dark:hover:text-gray-300"
-                @click="[main.setColorScheme(colorScheme.value,true),currentValue = colorScheme.value]"
-              >
-                <span :class="colorScheme.icon"></span>
-                <span x-text="colorScheme.label"></span>
-              </li>
-            </template>
-          </ul>
-        </li>
-        <!-- https://github.com/halo-sigs/plugin-search-widget -->
-        <li>
-          <a
-            href="javascript:SearchWidget.open()"
-            title="搜索"
-            class="text-gray-600 hover:text-blue-600 dark:text-slate-100"
-          >
-            <div class="i-tabler-search text-lg"></div>
-          </a>
-        </li>
-        <li
-          x-data="dropdown"
-          class="relative cursor-pointer transition-all"
-          @mouseenter="open()"
-          @mouseleave="close()"
-        >
-          <div>
-            <div class="size-5 text-gray-600 hover:text-blue-600 dark:text-slate-100">
-              <img
-                class="size-5 rounded-full"
-                src="/themes/theme-earth/assets/images/default-avatar.svg"
-                alt="消小潇"
-              />
+
+    <!-- 头部导航 -->
+    <header class="bg-white dark:bg-dark-100 shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-terminal text-primary text-xl"></i>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Curl命令解析器</h1>
             </div>
-            <ul
-              @mouseenter="open()"
-              @mouseleave="close()"
-              x-show="show"
-              x-transition:enter="transition ease-out duration-100"
-              x-transition:enter-start="transform opacity-0 scale-95"
-              x-transition:enter-end="transform opacity-100 scale-100"
-              x-transition:leave="transition ease-in duration-75"
-              x-transition:leave-start="transform opacity-100 scale-100"
-              x-transition:leave-end="transform opacity-0 scale-95"
-              class="absolute right-0 z-10 mt-2 w-40 divide-y divide-gray-50 overflow-hidden rounded bg-white shadow dark:divide-slate-600 dark:bg-slate-700"
-            >
-              <li
-                class="flex w-full items-center text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-600"
-              >
-                <a
-                  class="size-full truncate px-4 py-2 text-gray-600 hover:text-blue-600 dark:text-slate-50 dark:hover:text-gray-300"
-                  href="/console"
-                  target="_blank"
-                >控制台</a>
-              </li>
-              <li
-                class="flex w-full items-center text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-600"
-              >
-                <a
-                  class="size-full truncate px-4 py-2 text-gray-600 hover:text-blue-600 dark:text-slate-50 dark:hover:text-gray-300"
-                  href="/logout"
-                >退出登录</a>
-              </li>
-              
-            </ul>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  
-</header>
-
-    
-    
-      <section>
-  
-  
-</section>
-    
-    <section
-      class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] lg:px-6"
-    >
-      <div class="z-0 min-w-0">
-        
-    <section class="flex items-center dark:bg-gray-900 dark:text-gray-100">
-      <div class="container mx-auto my-8 flex flex-col items-center justify-center px-5">
-        <div class="max-w-md text-center">
-          <h2 class="mb-8 text-9xl font-extrabold dark:text-gray-600">404</h2>
-          <p
-            class="mb-8 text-2xl font-semibold md:text-3xl"
-          >Not Found</p>
-          <p class="mb-8 text-gray-500">No static resource cruljx.</p>
-          <a
-            href="http://192.168.0.101:23456/"
-            class="whitespace-no-wrap group inline-flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-white px-4 py-1 text-sm font-medium leading-6 text-gray-600 shadow-sm hover:bg-gray-50 focus:shadow-none focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-white"
-          >
-            <span class="i-tabler-arrow-left text-lg transition-all group-hover:-translate-x-1"></span>
-            <span>返回首页</span>
-          </a>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-300 transition-colors">
+                    <i class="fa fa-moon-o dark:hidden text-gray-600"></i>
+                    <i class="fa fa-sun-o hidden dark:inline text-yellow-400"></i>
+                </button>
+                <button id="help-btn" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-300 transition-colors">
+                    <i class="fa fa-question-circle text-gray-600 dark:text-gray-300"></i>
+                </button>
+            </div>
         </div>
-      </div>
-    </section>
-  
-      </div>
-      
-      
-        <aside class="z-0 hidden w-72 flex-col gap-6 md:flex">
-  
-    
-    
-  
-</aside>
-      
-    </section>
-    <footer class="mt-10 bg-white py-8 dark:bg-slate-800">
-  <div class="mx-auto max-w-7xl px-4 sm:flex sm:items-center sm:justify-between lg:px-6">
-    <a href="/" class="mb-4 flex items-center justify-center sm:mb-0 sm:justify-start">
-      
-      <span
-        class="self-center whitespace-nowrap text-2xl font-semibold dark:text-slate-50"
-      >关注我</span>
-    </a>
-    
+    </header>
 
-    
-  <div class="mt-4 flex justify-center space-x-6 sm:mt-0">
-    
-      <a
-        href="https://space.bilibili.com/269140788"
-        class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
-        title="哔哩哔哩"
-      >
-        <div class="size-5 i-simple-icons-bilibili"></div>
-      </a>
-      
-    
-  </div>
+    <main class="container mx-auto px-4 py-8">
+        <!-- 输入区域 -->
+        <section class="mb-8 animate-fade-in">
+            <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 transition-all duration-300">
+                <h2 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fa fa-paste text-primary mr-2"></i>
+                    Curl命令输入
+                </h2>
+                <div class="mb-4">
+                    <textarea id="curl-input" rows="8" placeholder="请在此输入或粘贴您的curl命令..." 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-dark-300 
+                        focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none scrollbar-thin transition-all duration-200"></textarea>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <button id="parse-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 flex items-center justify-center w-full sm:w-auto card-hover">
+                        <i class="fa fa-magic mr-2"></i>
+                        解析命令
+                    </button>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button id="clear-btn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-all duration-200">
+                            <i class="fa fa-trash-o mr-1"></i>
+                            清空
+                        </button>
+                        <button id="example-btn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-all duration-200">
+                            <i class="fa fa-file-text-o mr-1"></i>
+                            示例
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- 解析结果区域 -->
+        <section id="results-section" class="mb-8 hidden animate-fade-in">
+            <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 transition-all duration-300">
+                <h2 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fa fa-bar-chart text-secondary mr-2"></i>
+                    解析结果
+                </h2>
+                <div id="results-container" class="space-y-6">
+                    <!-- 解析结果将动态插入到这里 -->
+                </div>
+            </div>
+        </section>
 
-  </div>
-  <hr class="my-6 border-gray-100 dark:border-slate-700 sm:mx-auto lg:my-8" />
-  <div class="space-y-1">
-    
-    
-    <span class="mx-auto block max-w-7xl px-4 text-center text-sm text-gray-500 dark:text-slate-300 lg:px-6">
-      ©
-      2025
-      <a href="/" class="hover:underline">消小潇</a>. All Rights Reserved. Powered by
-      <a href="https://halo.run" class="hover:underline" target="_blank">Halo</a>.
-    </span>
-    <span class="mx-auto block max-w-7xl px-4 text-center text-sm text-gray-500 dark:text-slate-300 lg:px-6">
-      <halo:footer />
-    </span>
-  </div>
-</footer>
+        <!-- 内容插入工具和框架区域 -->
+        <section class="animate-fade-in">
+            <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 transition-all duration-300">
+                <h2 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fa fa-wrench text-primary mr-2"></i>
+                    内容生成器
+                </h2>
+                
+                <!-- 插入工具 -->
+                <div class="mb-4 bg-gray-50 dark:bg-dark-300 p-4 rounded-lg">
+                    <h3 class="font-medium mb-3 text-sm text-gray-500 dark:text-gray-400">快速插入</h3>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <button class="insert-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md text-sm transition-colors" data-char="@">@</button>
+                        <button class="insert-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md text-sm transition-colors" data-char="#">#</button>
+                        <button class="insert-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md text-sm transition-colors" data-char="%">%</button>
+                        <button class="insert-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md text-sm transition-colors" data-char="&">&</button>
+                        <button class="insert-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md text-sm transition-colors" data-char="*">*</button>
+                        
+                        <div class="ml-2 flex-1 flex items-center">
+                            <input type="text" id="custom-char" placeholder="输入自定义内容" 
+                                class="flex-1 px-3 py-1.5 rounded-l-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-200 focus:outline-none text-sm">
+                            <button id="insert-custom" class="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-r-md text-sm transition-colors">
+                                插入
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 内容框架 -->
+                <div>
+                    <h3 class="font-medium mb-3 text-sm text-gray-500 dark:text-gray-400">内容框架</h3>
+                    <textarea id="content-frame" rows="6" placeholder="生成的内容将显示在这里..." 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-dark-300 
+                        focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none scrollbar-thin transition-all duration-200"></textarea>
+                </div>
+            </div>
+        </section>
+    </main>
 
+    <!-- 帮助模态框 -->
+    <div id="help-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-xl max-w-lg w-full mx-4 transform scale-95 transition-transform duration-300">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">使用帮助</h3>
+                    <button id="close-help" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <div class="text-gray-600 dark:text-gray-300 space-y-4">
+                    <p><strong>1. 输入Curl命令</strong><br>在上方文本框中粘贴您从开发者工具或其他地方获取的curl命令。</p>
+                    <p><strong>2. 解析命令</strong><br>点击"解析命令"按钮，系统会自动解析命令中的URL、请求头、请求体等信息。</p>
+                    <p><strong>3. 查看结果</strong><br>解析结果会分类展示在页面中，包括请求方法、URL、请求头等信息。</p>
+                    <p><strong>4. 内容生成</strong><br>您可以点击快速插入按钮或输入自定义内容，也可以点击解析结果中的数据项，将内容插入到内容框架中。</p>
+                    <p><strong>提示：</strong><br>点击解析结果中的任意数据项，可以将其值快速插入到内容框架中。</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-dark-300 px-6 py-4 rounded-b-xl">
+                <button id="got-it" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <!-- 页脚 -->
+    <footer class="bg-white dark:bg-dark-100 py-4 mt-8">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>© 2023 Curl命令解析器 | 安全、高效地解析和处理您的HTTP请求</p>
+        </div>
+    </footer>
 
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 元素选择器
+            const curlInput = document.getElementById('curl-input');
+            const parseBtn = document.getElementById('parse-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const exampleBtn = document.getElementById('example-btn');
+            const resultsSection = document.getElementById('results-section');
+            const resultsContainer = document.getElementById('results-container');
+            const contentFrame = document.getElementById('content-frame');
+            const insertBtns = document.querySelectorAll('.insert-btn');
+            const customChar = document.getElementById('custom-char');
+            const insertCustom = document.getElementById('insert-custom');
+            const themeToggle = document.getElementById('theme-toggle');
+            const helpBtn = document.getElementById('help-btn');
+            const helpModal = document.getElementById('help-modal');
+            const closeHelp = document.getElementById('close-help');
+            const gotIt = document.getElementById('got-it');
 
-    <button
-      type="button"
-      id="btn-scroll-to-top"
-      aria-label="回到顶部"
-      class="fixed bottom-5 right-5 flex items-center justify-center rounded-full bg-white p-3 opacity-0 shadow transition-all duration-300 hover:opacity-70 hover:shadow-lg dark:bg-slate-600 lg:bottom-10 lg:right-10"
-    >
-      <span class="i-tabler-chevron-up text-2xl text-gray-600 dark:text-slate-200"></span>
-    </button>
-  </body>
+            // 主题切换
+            themeToggle.addEventListener('click', function() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            });
+
+            // 加载保存的主题
+            if (localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // 帮助模态框
+            helpBtn.addEventListener('click', function() {
+                helpModal.classList.remove('opacity-0', 'pointer-events-none');
+                helpModal.querySelector('div').classList.remove('scale-95');
+                helpModal.querySelector('div').classList.add('scale-100');
+            });
+
+            function closeHelpModal() {
+                helpModal.classList.add('opacity-0', 'pointer-events-none');
+                helpModal.querySelector('div').classList.remove('scale-100');
+                helpModal.querySelector('div').classList.add('scale-95');
+            }
+
+            closeHelp.addEventListener('click', closeHelpModal);
+            gotIt.addEventListener('click', closeHelpModal);
+            helpModal.addEventListener('click', function(e) {
+                if (e.target === helpModal) closeHelpModal();
+            });
+
+            // 示例curl命令（不包含用户的实际数据）
+            const exampleCurl = `curl -X POST 'https://api.example.com/v1/data/submit' \
+   -H 'cookie: user_token=abc123def456; session_id=xyz789; locale=zh_CN' \
+   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
+   -H 'Content-Type: application/json; charset=utf-8' \
+   -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' \
+   -H 'Accept-Encoding: gzip, deflate, br' \
+   --data '{"userId":"123456","appVersion":"1.0.0","timestamp":"2023-10-01T12:00:00Z","data":"eyJ0ZXN0IjoiZXhhbXBsZSJ9"}' \
+   --compressed`;
+
+            // 示例按钮
+            exampleBtn.addEventListener('click', function() {
+                curlInput.value = exampleCurl;
+                curlInput.classList.add('ring-2', 'ring-primary');
+                setTimeout(() => {
+                    curlInput.classList.remove('ring-2', 'ring-primary');
+                }, 1000);
+            });
+
+            // 清空按钮
+            clearBtn.addEventListener('click', function() {
+                curlInput.value = '';
+                resultsSection.classList.add('hidden');
+                contentFrame.value = '';
+            });
+
+            // 解析curl命令
+            parseBtn.addEventListener('click', function() {
+                const curlCommand = curlInput.value.trim();
+                if (!curlCommand) {
+                    alert('请输入curl命令');
+                    return;
+                }
+
+                try {
+                    const parsedData = parseCurl(curlCommand);
+                    displayResults(parsedData);
+                    resultsSection.classList.remove('hidden');
+                    
+                    // 滚动到结果区域
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } catch (error) {
+                    alert('解析失败：' + error.message);
+                }
+            });
+
+            // 解析curl命令的函数
+            function parseCurl(curlCommand) {
+                const result = {
+                    method: 'GET',
+                    url: '',
+                    headers: {},
+                    data: null
+                };
+
+                // 提取请求方法
+                const methodMatch = curlCommand.match(/-X\s+(\w+)/i);
+                if (methodMatch) {
+                    result.method = methodMatch[1].toUpperCase();
+                }
+
+                // 提取URL
+                const urlMatch = curlCommand.match(/'([^']+)'|"([^"]+)"|(\S+)/);
+                if (urlMatch) {
+                    result.url = urlMatch[1] || urlMatch[2] || urlMatch[3];
+                    // 清理URL中的特殊字符
+                    result.url = result.url.replace(/^\s*'\s*|\s*'\s*$/g, '').replace(/^\s*"\s*|\s*"\s*$/g, '');
+                }
+
+                // 提取请求头
+                const headerMatches = curlCommand.match(/-H\s+'([^']+)'|-H\s+"([^"]+)"|-H\s+(\S+)/gi);
+                if (headerMatches) {
+                    headerMatches.forEach(headerMatch => {
+                        // 移除 -H 前缀和引号
+                        const header = headerMatch.replace(/^-H\s+['"]?|['"]?$/gi, '');
+                        const [key, value] = header.split(/:\s*/, 2);
+                        if (key && value) {
+                            result.headers[key.trim()] = value.trim();
+                        }
+                    });
+                }
+
+                // 提取请求数据
+                const dataMatch = curlCommand.match(/--data\s+'([^']+)'|--data\s+"([^"]+)"|--data\s+(\S+)/i);
+                if (dataMatch) {
+                    const dataStr = dataMatch[1] || dataMatch[2] || dataMatch[3];
+                    try {
+                        // 尝试解析JSON
+                        result.data = JSON.parse(dataStr);
+                    } catch (e) {
+                        // 如果不是JSON，保留原始字符串
+                        result.data = dataStr;
+                    }
+                }
+
+                return result;
+            }
+
+            // 显示解析结果
+            function displayResults(data) {
+                resultsContainer.innerHTML = '';
+
+                // 基本信息卡片
+                const basicInfoCard = document.createElement('div');
+                basicInfoCard.className = 'bg-gray-50 dark:bg-dark-300 p-4 rounded-lg';
+                basicInfoCard.innerHTML = `
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">请求方法</h3>
+                            <div class="flex items-center">
+                                <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">${data.method}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">请求URL</h3>
+                            <p class="text-sm break-all" id="url-value">${data.url}</p>
+                        </div>
+                    </div>
+                `;
+                resultsContainer.appendChild(basicInfoCard);
+
+                // 请求头卡片
+                if (Object.keys(data.headers).length > 0) {
+                    const headersCard = document.createElement('div');
+                    headersCard.className = 'bg-gray-50 dark:bg-dark-300 p-4 rounded-lg';
+                    headersCard.innerHTML = `
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">请求头</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${Object.entries(data.headers).map(([key, value]) => `
+                                <div class="header-item bg-white dark:bg-dark-200 p-3 rounded-md shadow-sm hover:shadow card-hover cursor-pointer" 
+                                     data-key="${key}" data-value="${escapeHtml(value)}">
+                                    <div class="text-sm font-medium">${escapeHtml(key)}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 break-all">${escapeHtml(value)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    resultsContainer.appendChild(headersCard);
+                }
+
+                // 请求数据卡片
+                if (data.data !== null) {
+                    const dataCard = document.createElement('div');
+                    dataCard.className = 'bg-gray-50 dark:bg-dark-300 p-4 rounded-lg';
+                    
+                    let dataHtml = '';
+                    if (typeof data.data === 'object' && data.data !== null) {
+                        dataHtml = `
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">请求数据</h3>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${Object.entries(data.data).map(([key, value]) => {
+                                    const valueStr = typeof value === 'object' ? JSON.stringify(value) : value;
+                                    return `
+                                        <div class="data-item bg-white dark:bg-dark-200 p-3 rounded-md shadow-sm hover:shadow card-hover cursor-pointer" 
+                                             data-key="${key}" data-value="${escapeHtml(valueStr)}">
+                                            <div class="text-sm font-medium">${escapeHtml(key)}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 break-all">${escapeHtml(valueStr)}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    } else {
+                        dataHtml = `
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">请求数据</h3>
+                            <div class="bg-white dark:bg-dark-200 p-3 rounded-md shadow-sm">
+                                <pre class="text-xs text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-all">${escapeHtml(data.data)}</pre>
+                            </div>
+                        `;
+                    }
+                    
+                    dataCard.innerHTML = dataHtml;
+                    resultsContainer.appendChild(dataCard);
+                }
+
+                // 为所有可点击的数据项添加事件监听器
+                document.querySelectorAll('.header-item, .data-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const value = this.getAttribute('data-value');
+                        insertIntoContentFrame(value);
+                        // 视觉反馈
+                        this.classList.add('ring-2', 'ring-primary');
+                        setTimeout(() => {
+                            this.classList.remove('ring-2', 'ring-primary');
+                        }, 500);
+                    });
+                });
+
+                // URL点击事件
+                document.getElementById('url-value')?.addEventListener('click', function() {
+                    insertIntoContentFrame(this.textContent);
+                });
+            }
+
+            // 插入内容到框架
+            function insertIntoContentFrame(content) {
+                contentFrame.value += content;
+                contentFrame.focus();
+                // 滚动到文本末尾
+                contentFrame.setSelectionRange(contentFrame.value.length, contentFrame.value.length);
+                // 视觉反馈
+                contentFrame.classList.add('ring-2', 'ring-primary');
+                setTimeout(() => {
+                    contentFrame.classList.remove('ring-2', 'ring-primary');
+                }, 500);
+            }
+
+            // 快速插入按钮事件
+            insertBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const char = this.getAttribute('data-char');
+                    insertIntoContentFrame(char);
+                });
+            });
+
+            // 自定义插入按钮事件
+            insertCustom.addEventListener('click', function() {
+                const customText = customChar.value.trim();
+                if (customText) {
+                    insertIntoContentFrame(customText);
+                    customChar.value = '';
+                }
+            });
+
+            // 按Enter键插入自定义内容
+            customChar.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    insertCustom.click();
+                }
+            });
+
+            // HTML转义函数
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        });
+    </script>
+</body>
 </html>
