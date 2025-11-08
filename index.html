@@ -1,0 +1,251 @@
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+  <title>404 | Not Found - 消小潇</title>
+  
+  <link rel="stylesheet" href="/themes/theme-earth/assets/dist/style.css?v=1.13.1" />
+  <script>
+    window.i18nResources = {
+      "jsModule.colorSchemeSwitcher.dark": `暗色`,
+      "jsModule.colorSchemeSwitcher.light": `亮色`,
+      "jsModule.colorSchemeSwitcher.auto": `跟随系统`,
+      "jsModule.share.qzone": `QQ 空间`,
+      "jsModule.share.weibo": `微博`,
+      "jsModule.share.douban": `豆瓣`,
+      "jsModule.share.wechat": `微信`,
+      "jsModule.share.native": `系统分享`,
+      "jsModule.share.windowTitle": `分享`,
+      "jsModule.upvote.networkError": `网络请求失败，请稍后再试`,
+    };
+  </script>
+  <script src="/themes/theme-earth/assets/dist/main.iife.js?v=1.13.1"></script>
+  <script>
+    main.initColorScheme("system",true)
+  </script>
+
+
+    
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900">
+    <header
+  id="header-menu"
+  class="sticky top-0 z-10 flex h-16 bg-white py-3 shadow-sm transition-all dark:bg-gray-800"
+  x-data="{ open : false }"
+>
+  <div class="mx-auto flex h-full w-full max-w-7xl justify-between px-4 lg:px-6">
+    <div class="flex h-full items-center gap-6">
+      <div class="mr-2 h-full">
+        <a href="/" class="inline-flex h-full items-center">
+          
+          <span
+            id="site-title"
+            class="text-lg font-medium text-gray-900 dark:text-slate-100"
+          >消小潇</span>
+        </a>
+      </div>
+      
+    </div>
+    <div class="flex items-center">
+      <ul x-data="colorSchemeSwitcher" class="flex items-center gap-4">
+        <li class="sm:hidden" x-on:click="open = true">
+          <div class="i-tabler-menu-2 text-lg text-gray-600 hover:text-blue-600 dark:text-slate-100"></div>
+        </li>
+        <li
+          x-data="dropdown"
+          class="relative cursor-pointer transition-all"
+          @mouseenter="open()"
+          @mouseleave="close()"
+        >
+          <div
+            class="cursor-pointer text-lg text-gray-600 transition-all hover:text-blue-600 dark:text-slate-100"
+            :class="colorScheme.icon"
+          ></div>
+          <ul
+            @mouseenter="open()"
+            @mouseleave="close()"
+            x-show="show"
+            x-transition:enter="transition ease-out duration-100"
+            x-transition:enter-start="transform opacity-0 scale-95"
+            x-transition:enter-end="transform opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-75"
+            x-transition:leave-start="transform opacity-100 scale-100"
+            x-transition:leave-end="transform opacity-0 scale-95"
+            class="absolute right-0 z-10 mt-2 w-40 divide-y divide-gray-50 overflow-hidden rounded bg-white shadow dark:divide-slate-600 dark:bg-slate-700"
+          >
+            <template x-for="colorScheme in colorSchemes">
+              <li
+                class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 dark:text-slate-50 dark:hover:bg-slate-600 dark:hover:text-gray-300"
+                @click="[main.setColorScheme(colorScheme.value,true),currentValue = colorScheme.value]"
+              >
+                <span :class="colorScheme.icon"></span>
+                <span x-text="colorScheme.label"></span>
+              </li>
+            </template>
+          </ul>
+        </li>
+        <!-- https://github.com/halo-sigs/plugin-search-widget -->
+        <li>
+          <a
+            href="javascript:SearchWidget.open()"
+            title="搜索"
+            class="text-gray-600 hover:text-blue-600 dark:text-slate-100"
+          >
+            <div class="i-tabler-search text-lg"></div>
+          </a>
+        </li>
+        <li
+          x-data="dropdown"
+          class="relative cursor-pointer transition-all"
+          @mouseenter="open()"
+          @mouseleave="close()"
+        >
+          <div>
+            <div class="size-5 text-gray-600 hover:text-blue-600 dark:text-slate-100">
+              <img
+                class="size-5 rounded-full"
+                src="/themes/theme-earth/assets/images/default-avatar.svg"
+                alt="消小潇"
+              />
+            </div>
+            <ul
+              @mouseenter="open()"
+              @mouseleave="close()"
+              x-show="show"
+              x-transition:enter="transition ease-out duration-100"
+              x-transition:enter-start="transform opacity-0 scale-95"
+              x-transition:enter-end="transform opacity-100 scale-100"
+              x-transition:leave="transition ease-in duration-75"
+              x-transition:leave-start="transform opacity-100 scale-100"
+              x-transition:leave-end="transform opacity-0 scale-95"
+              class="absolute right-0 z-10 mt-2 w-40 divide-y divide-gray-50 overflow-hidden rounded bg-white shadow dark:divide-slate-600 dark:bg-slate-700"
+            >
+              <li
+                class="flex w-full items-center text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-600"
+              >
+                <a
+                  class="size-full truncate px-4 py-2 text-gray-600 hover:text-blue-600 dark:text-slate-50 dark:hover:text-gray-300"
+                  href="/console"
+                  target="_blank"
+                >控制台</a>
+              </li>
+              <li
+                class="flex w-full items-center text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-600"
+              >
+                <a
+                  class="size-full truncate px-4 py-2 text-gray-600 hover:text-blue-600 dark:text-slate-50 dark:hover:text-gray-300"
+                  href="/logout"
+                >退出登录</a>
+              </li>
+              
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+</header>
+
+    
+    
+      <section>
+  
+  
+</section>
+    
+    <section
+      class="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 px-4 md:grid-cols-[1fr_18rem] lg:px-6"
+    >
+      <div class="z-0 min-w-0">
+        
+    <section class="flex items-center dark:bg-gray-900 dark:text-gray-100">
+      <div class="container mx-auto my-8 flex flex-col items-center justify-center px-5">
+        <div class="max-w-md text-center">
+          <h2 class="mb-8 text-9xl font-extrabold dark:text-gray-600">404</h2>
+          <p
+            class="mb-8 text-2xl font-semibold md:text-3xl"
+          >Not Found</p>
+          <p class="mb-8 text-gray-500">No static resource cruljx.</p>
+          <a
+            href="http://192.168.0.101:23456/"
+            class="whitespace-no-wrap group inline-flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-white px-4 py-1 text-sm font-medium leading-6 text-gray-600 shadow-sm hover:bg-gray-50 focus:shadow-none focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-white"
+          >
+            <span class="i-tabler-arrow-left text-lg transition-all group-hover:-translate-x-1"></span>
+            <span>返回首页</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  
+      </div>
+      
+      
+        <aside class="z-0 hidden w-72 flex-col gap-6 md:flex">
+  
+    
+    
+  
+</aside>
+      
+    </section>
+    <footer class="mt-10 bg-white py-8 dark:bg-slate-800">
+  <div class="mx-auto max-w-7xl px-4 sm:flex sm:items-center sm:justify-between lg:px-6">
+    <a href="/" class="mb-4 flex items-center justify-center sm:mb-0 sm:justify-start">
+      
+      <span
+        class="self-center whitespace-nowrap text-2xl font-semibold dark:text-slate-50"
+      >关注我</span>
+    </a>
+    
+
+    
+  <div class="mt-4 flex justify-center space-x-6 sm:mt-0">
+    
+      <a
+        href="https://space.bilibili.com/269140788"
+        class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+        title="哔哩哔哩"
+      >
+        <div class="size-5 i-simple-icons-bilibili"></div>
+      </a>
+      
+    
+  </div>
+
+
+  </div>
+  <hr class="my-6 border-gray-100 dark:border-slate-700 sm:mx-auto lg:my-8" />
+  <div class="space-y-1">
+    
+    
+    <span class="mx-auto block max-w-7xl px-4 text-center text-sm text-gray-500 dark:text-slate-300 lg:px-6">
+      ©
+      2025
+      <a href="/" class="hover:underline">消小潇</a>. All Rights Reserved. Powered by
+      <a href="https://halo.run" class="hover:underline" target="_blank">Halo</a>.
+    </span>
+    <span class="mx-auto block max-w-7xl px-4 text-center text-sm text-gray-500 dark:text-slate-300 lg:px-6">
+      <halo:footer />
+    </span>
+  </div>
+</footer>
+
+
+
+    
+
+    <button
+      type="button"
+      id="btn-scroll-to-top"
+      aria-label="回到顶部"
+      class="fixed bottom-5 right-5 flex items-center justify-center rounded-full bg-white p-3 opacity-0 shadow transition-all duration-300 hover:opacity-70 hover:shadow-lg dark:bg-slate-600 lg:bottom-10 lg:right-10"
+    >
+      <span class="i-tabler-chevron-up text-2xl text-gray-600 dark:text-slate-200"></span>
+    </button>
+  </body>
+</html>
